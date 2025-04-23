@@ -12,6 +12,38 @@ from datetime import datetime
 from telebot import types
 import dotenv
 
+# Example dictionary for language support
+LANGUAGES = {
+    "en": {
+        "welcome": "Welcome to openvpn-access-bot!",
+        "invalid_user": "You do not have permission to execute this command.",
+        "enter_name": "Enter new user name in format [a-zA-Z0-9]:",
+        "user_exists": "The user already exists. Here is the key-file:",
+        "user_created": "The user has been created. Here is the key-file:",
+        "invalid_input": "Invalid input format. Enter the command again and enter the name in the required format.",
+    },
+    "tk": {  # Turkmen language
+        "welcome": "openvpn-access-bot-a hoş geldiňiz!",
+        "invalid_user": "Bu buýruk üçin rugsadyňyz ýok.",
+        "enter_name": "Täze ulanyjy adyny [a-zA-Z0-9] formatda giriziň:",
+        "user_exists": "Bu ulanyjy öň bar. Bu ýerde esasy faýl:",
+        "user_created": "Ulanyjy döredildi. Bu ýerde esasy faýl:",
+        "invalid_input": "Ýalňyş giriş formaty. Buýrugy täzeden giriziň we talap edilýän formatda ady giriziň."
+    }
+}
+
+# Set default language
+DEFAULT_LANGUAGE = "en"
+
+# Function to get text in the selected language
+def get_text(key, lang=DEFAULT_LANGUAGE):
+    return LANGUAGES.get(lang, LANGUAGES["en"]).get(key, key)
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    lang = "tk" if message.chat.language_code == "tk" else "en"  # Detect language, fallback to English
+    bot.send_message(message.chat.id, get_text("welcome", lang))
+
 dotenv.load_dotenv()
 TOKEN = os.getenv('TOKEN')
 ADMIN_IDS = os.getenv('ADMIN_IDS')
